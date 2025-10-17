@@ -6,6 +6,15 @@
 ## has more thorough IDE-specific entries.
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
+settings.json
+project.lock.json
+bin/
+obj/
+.vs/
+node_modules/
+build/
+TestResults/
+publish/
 
 # Build results
 [Dd]ebug/
@@ -52,3 +61,8 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Coverlet is a free, cross platform Code Coverage Tool
+coverage*.json
+coverage*.xml
+coverage*.info
