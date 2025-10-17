@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQ.Producer.ConsoleApp", "Producer\RabbitMQ.Producer.ConsoleApp.csproj", "{571E3EB2-117D-4492-AACE-B64772F556E0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumer", "Consumer", "{7E27DC59-6CD1-79A0-D6D2-D5E2D5D70425}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQ.Consumer.ConsoleApp", "Consumer\RabbitMQ.Consumer.ConsoleApp\RabbitMQ.Consumer.ConsoleApp.csproj", "{122C3894-34A3-4FE8-AAA2-882D8A0A2F3F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventBusRabbitMQ", "EventBusRabbitMQ", "{291D5285-C48C-A068-48C2-C59770C7350A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBusRabbitMQ", "EventBusRabbitMQ\EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{2F81CC16-BBC5-478A-B7F8-A42CF12E6CF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQ.EventBusRabbitMQ", "EventBusRabbitMQ\RabbitMQ.EventBusRabbitMQ.csproj", "{2F81CC16-BBC5-478A-B7F8-A42CF12E6CF7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Producer", "Producer", "{EC6D7241-3B0D-8BAE-F664-008D99267B00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQ.Producer.ConsoleApp", "Producer\RabbitMQ.Producer.ConsoleApp.csproj", "{6A7C4315-3884-40DE-B3E4-596842650AE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,18 +25,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Debug|x64.Build.0 = Debug|Any CPU
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Debug|x86.Build.0 = Debug|Any CPU
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Release|x64.ActiveCfg = Release|Any CPU
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Release|x64.Build.0 = Release|Any CPU
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Release|x86.ActiveCfg = Release|Any CPU
-		{571E3EB2-117D-4492-AACE-B64772F556E0}.Release|x86.Build.0 = Release|Any CPU
 		{122C3894-34A3-4FE8-AAA2-882D8A0A2F3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{122C3894-34A3-4FE8-AAA2-882D8A0A2F3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{122C3894-34A3-4FE8-AAA2-882D8A0A2F3F}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -59,6 +49,18 @@ Global
 		{2F81CC16-BBC5-478A-B7F8-A42CF12E6CF7}.Release|x64.Build.0 = Release|Any CPU
 		{2F81CC16-BBC5-478A-B7F8-A42CF12E6CF7}.Release|x86.ActiveCfg = Release|Any CPU
 		{2F81CC16-BBC5-478A-B7F8-A42CF12E6CF7}.Release|x86.Build.0 = Release|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Debug|x64.Build.0 = Debug|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Debug|x86.Build.0 = Debug|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Release|x64.ActiveCfg = Release|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Release|x64.Build.0 = Release|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Release|x86.ActiveCfg = Release|Any CPU
+		{6A7C4315-3884-40DE-B3E4-596842650AE1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,5 +68,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{122C3894-34A3-4FE8-AAA2-882D8A0A2F3F} = {7E27DC59-6CD1-79A0-D6D2-D5E2D5D70425}
 		{2F81CC16-BBC5-478A-B7F8-A42CF12E6CF7} = {291D5285-C48C-A068-48C2-C59770C7350A}
+		{6A7C4315-3884-40DE-B3E4-596842650AE1} = {EC6D7241-3B0D-8BAE-F664-008D99267B00}
 	EndGlobalSection
 EndGlobal
