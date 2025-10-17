@@ -4,6 +4,7 @@ This Github Repository is used as playground to test RabbitMQ functionality in .
 ## Project Dependency
 * Uses Docker to create RabbitMQ instance
 * Contain 3 projects: Producer, Consumer and EvenBuRabbitMQ
+* Uses RabbitMQ.Client 7.1.2 Nuget package
 
 ## Todo
 * Edit project to use Docker Compose to avoid running Docker commands mannually.
