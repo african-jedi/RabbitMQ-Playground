@@ -9,6 +9,7 @@ class Program
 {
     static async Task Main(string[] args)
     {
+        //consumer send to "letterbox" queue which uses default exchange
         var factory = new ConnectionFactory() { HostName = "localhost" };
         // Create a connection
         using (var connection = await factory.CreateConnectionAsync())
