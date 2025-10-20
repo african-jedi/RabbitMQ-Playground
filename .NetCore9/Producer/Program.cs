@@ -43,14 +43,25 @@ class Program
             );
 
             //start event bus
-            await eventBus.StartAsync(CancellationToken.None);
+            //CancellationTokenSource tokenSource = new CancellationTokenSource();
+            //CancellationToken cancellationToken = tokenSource.Token;
+            //await eventBus.StartAsync(cancellationToken);
 
 
             //publish event
-            var @event = new OrderCreatedIntegrationEvent(1);
-            await eventBus.PublishEvent(@event);
+            //var @event = new OrderCreatedIntegrationEvent(1);
+            //await eventBus.PublishEvent(@event);
 
-            Console.WriteLine("Close exclusive connection and channel.");
+            //Console.WriteLine(" Press [enter] to exit.");
+            //Console.ReadLine();
+            
+            //tokenSource.Cancel();
+            //await eventBus.StopAsync(cancellationToken);
+             //publish event
+            //@event = new OrderCreatedIntegrationEvent(2);
+            //await eventBus.PublishEvent(@event);
+
+            Console.WriteLine("Stop async task.");
             Console.WriteLine(" Press [enter] to exit.");
             Console.ReadLine();
         }

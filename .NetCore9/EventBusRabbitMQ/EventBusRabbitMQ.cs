@@ -50,34 +50,63 @@ public class EventBus : IEventBus, IDisposable, IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        //remove hardcoded routing key
-        var routingKey = "OrderCreatedIntegrationEvent";
-        var factory = new ConnectionFactory() { HostName = _options.Connection };
-        var connection = factory.CreateConnectionAsync().Result;
-        _consumerChannel = connection.CreateChannelAsync().Result;
+        _ = Task.Factory.StartNew((c) =>
+        {
+            try
+            {
+                //remove hardcoded routing key
+                var routingKey = "OrderCreatedIntegrationEvent";
+                var factory = new ConnectionFactory() { HostName = _options.Connection };
+                var connection = factory.CreateConnectionAsync().Result;
+                _consumerChannel = connection.CreateChannelAsync().Result;
 
-        _consumerChannel.ExchangeDeclareAsync(_options.Exchange, ExchangeType.Direct);
-        // Declare a queue
-        _consumerChannel.QueueDeclareAsync(queue: _options.QueueName,
-                                        durable: true,
-                                        exclusive: false,
-                                        autoDelete: false,
-                                        arguments: null);
+                _consumerChannel.ExchangeDeclareAsync(_options.Exchange, ExchangeType.Direct);
+                // Declare a queue
+                _consumerChannel.QueueDeclareAsync(queue: _options.QueueName,
+                                                durable: true,
+                                                exclusive: false,
+                                                autoDelete: false,
+                                                arguments: null);
 
-        //bind queue to exchange with routing key
-        _consumerChannel.QueueBindAsync(queue: _options.QueueName,
-                                     exchange: _options.Exchange,
-                                     routingKey: routingKey,
-                                     arguments: null);
+                //bind queue to exchange with routing key
+                _consumerChannel.QueueBindAsync(queue: _options.QueueName,
+                                             exchange: _options.Exchange,
+                                             routingKey: routingKey,
+                                             arguments: null);
 
-        //add message received event handler here
-
+                //add message received event handler here
+            }
+            catch (OperationCanceledException canceledException)
+            {
+                //logger.LogError(ex, "Operation cancelled");
+            }
+            catch (Exception ex)
+            {
+                //logger.LogError(ex, "Error starting RabbitMQ connection");
+            }
+        },
+        TaskCreationOptions.LongRunning, cancellationToken);
         return Task.CompletedTask;
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if (_consumerChannel != null && _consumerChannel.IsOpen)
+                await _consumerChannel?.CloseAsync(cancellationToken);
+            _consumerChannel?.Dispose();
+        }
+        catch (OperationCanceledException ex)
+        {
+            //logger.LogError(ex, "Channel closing was canceled.");
+        }
+        catch (Exception ex)
+        {
+            //logger.LogError(ex, "Error stopping RabbitMQ connection");
+        }
+        //todo: test
+        return;
     }
 
     #region Private Methods
@@ -133,9 +162,9 @@ public class EventBus : IEventBus, IDisposable, IHostedService
         // {
         //     await handler.Handle(integrationEvent);
         // }
-        await Task.Yield();        
+        await Task.Yield();
     }
-    
+
     private byte[] SerializeMessage(IntegrationEvent @event)
     {
         //Investigate need for JsonSerializerOptions in subscriptionInfo
