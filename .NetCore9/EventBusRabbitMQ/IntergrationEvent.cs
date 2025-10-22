@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace EventBusRabbitMQ;
+namespace RabbitMQ.EventBusRabbitMQ;
 
 public record IntegrationEvent
 {

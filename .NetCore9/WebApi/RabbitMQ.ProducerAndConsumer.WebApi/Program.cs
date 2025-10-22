@@ -1,3 +1,5 @@
+using RabbitMQ.ProducerAndConsumer.WebApi.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,17 +8,18 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(options =>
 {
-options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-{
-Title = "Order API",
-Version = "v1",
-Description = "A sample API for demonstrating RabbitMQ Producer and Consumer in Web API",
-Contact = new Microsoft.OpenApi.Models.OpenApiContact
-{
-Name = "African Jedi"
-}
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Order API",
+        Version = "v1",
+        Description = "A sample API for demonstrating RabbitMQ Producer and Consumer in Web API",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Name = "African Jedi"
+        }
+    });
 });
-});
+builder.AddApplicationServices();
 
 var app = builder.Build();
 app.MapControllers();

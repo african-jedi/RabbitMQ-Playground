@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace EventBusRabbitMQ;
+namespace RabbitMQ.EventBusRabbitMQ;
 
 public interface IEventBus: IHostedService
 {

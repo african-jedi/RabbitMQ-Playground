@@ -1,17 +1,17 @@
 using System;
 
-namespace EventBusRabbitMQ;
+namespace RabbitMQ.EventBusRabbitMQ;
 
 public class RabbitMQOptions
 {
-   public string Connection{get;}
-   public string Exchange{get;}
-   public string QueueName { get; }
+   public string Connection { get; set; }
+   public string Exchange { get; set; }
+   public string QueueName { get; set; }
 
    public RabbitMQOptions(string connection, string exchange, string queueName)
    {
-      Connection=connection;
-      Exchange=exchange;
-      QueueName=queueName;
+      Connection = connection;
+      Exchange = exchange;
+      QueueName = queueName;
    }
 }

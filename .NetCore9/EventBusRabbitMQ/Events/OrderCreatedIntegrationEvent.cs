@@ -1,5 +1,5 @@
 using System;
 
-namespace EventBusRabbitMQ.Events;
+namespace RabbitMQ.EventBusRabbitMQ.Events;
 
 public record OrderCreatedIntegrationEvent(int OrderId):IntegrationEvent;

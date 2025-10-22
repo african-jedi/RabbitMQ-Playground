@@ -1,18 +1,19 @@
 using System.Text;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client.Events;
+using RabbitMQ.EventBusRabbitMQ.Abstractions;
 
-namespace EventBusRabbitMQ;
+namespace RabbitMQ.EventBusRabbitMQ;
 
-public class EventBus : IEventBus, IDisposable, IHostedService
+public sealed class EventBus(
+    IOptions<RabbitMQOptions> options,
+    IOptions<EventBusSubscriptionInfo> subscriptionOptions
+    ) : IEventBus, IDisposable, IHostedService
 {
-    private RabbitMQOptions _options;
+    private readonly RabbitMQOptions _options = options.Value;
+    private readonly EventBusSubscriptionInfo _subscriptionInfo = subscriptionOptions.Value;
     private IChannel? _consumerChannel;
-    public EventBus(RabbitMQOptions options)
-    {
-        _options = options;
-        _consumerChannel = null;
-    }
 
     public void Dispose()
     {
