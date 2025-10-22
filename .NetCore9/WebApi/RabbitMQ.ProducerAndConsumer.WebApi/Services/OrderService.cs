@@ -1,6 +1,7 @@
 using System;
 using RabbitMQ.EventBusRabbitMQ;
 using RabbitMQ.EventBusRabbitMQ.Events;
+using RabbitMQ.ProducerAndConsumer.WebApi.Model;
 
 namespace RabbitMQ.ProducerAndConsumer.WebApi.Services;
 
@@ -12,9 +13,9 @@ public class OrderService
         _eventBus = eventBus;
     }
 
-    public async Task CreateOrder(int orderId)
+    public async Task CreateOrder(OrderDTO order)
     {
-        var @event = new OrderCreatedIntegrationEvent(orderId);
+        var @event = new OrderCreatedIntegrationEvent(order.Id);
         await _eventBus.PublishEvent(@event);
     }
 }

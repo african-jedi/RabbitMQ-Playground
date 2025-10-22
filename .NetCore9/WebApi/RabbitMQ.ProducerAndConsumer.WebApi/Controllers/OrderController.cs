@@ -34,7 +34,7 @@ public class OrderController : ControllerBase
         // Logic to create the order
         // For demonstration, we'll just return the created order with a dummy ID
         order.Id = new Random().Next(1000, 9999);
-        await _orderService.CreateOrder(order.Id);
+        await _orderService.CreateOrder(order);
 
         return TypedResults.CreatedAtRoute<OrderDTO>(routeName: "GetOrderById", routeValues: new { id = order.Id }, value: order);
     }
