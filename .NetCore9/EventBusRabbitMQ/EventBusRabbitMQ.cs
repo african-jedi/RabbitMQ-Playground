@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client.Events;
@@ -7,6 +8,7 @@ using RabbitMQ.EventBusRabbitMQ.Abstractions;
 namespace RabbitMQ.EventBusRabbitMQ;
 
 public sealed class EventBus(
+    IServiceProvider serviceProvider,
     IOptions<RabbitMQOptions> options,
     IOptions<EventBusSubscriptionInfo> subscriptionOptions
     ) : IEventBus, IDisposable, IHostedService
@@ -56,7 +58,6 @@ public sealed class EventBus(
             try
             {
                 //remove hardcoded routing key
-                var routingKey = "OrderCreatedIntegrationEvent";
                 var factory = new ConnectionFactory() { HostName = _options.Connection };
                 var connection = factory.CreateConnectionAsync().Result;
                 _consumerChannel = connection.CreateChannelAsync().Result;
@@ -69,11 +70,27 @@ public sealed class EventBus(
                                                 autoDelete: false,
                                                 arguments: null);
 
+                // if (logger.IsEnabled(LogLevel.Trace))
+                // {
+                //     logger.LogTrace("Starting RabbitMQ basic consume");
+                // }
+
+                var consumer = new AsyncEventingBasicConsumer(_consumerChannel);
+
+                consumer.ReceivedAsync += OnMessageReceived;
+                _consumerChannel.BasicConsumeAsync(
+                    queue: _options.QueueName,
+                    autoAck: false,
+                    consumer: consumer);
+
                 //bind queue to exchange with routing key
-                _consumerChannel.QueueBindAsync(queue: _options.QueueName,
-                                             exchange: _options.Exchange,
-                                             routingKey: routingKey,
-                                             arguments: null);
+                foreach (var (eventName, _) in _subscriptionInfo.EventTypes)
+                {
+                    _consumerChannel.QueueBindAsync(
+                        queue: _options.QueueName,
+                        exchange: _options.Exchange,
+                        routingKey: eventName);
+                }
 
                 //add message received event handler here
             }
@@ -111,10 +128,10 @@ public sealed class EventBus(
     }
 
     #region Private Methods
-    // private IntegrationEvent DeserializeMessage(string message, Type eventType)
-    // {
-    //     //return JsonSerializer.Deserialize(message, eventType, _subscriptionInfo.JsonSerializerOptions) as IntegrationEvent;
-    // }
+    private IntegrationEvent DeserializeMessage(string message, Type eventType)
+    {
+        return JsonSerializer.Deserialize(message, eventType, _subscriptionInfo.JsonSerializerOptions) as IntegrationEvent;
+    }
 
     private async Task OnMessageReceived(object sender, BasicDeliverEventArgs eventArgs)
     {
@@ -145,24 +162,24 @@ public sealed class EventBus(
         //     logger.LogTrace("Processing RabbitMQ event: {EventName}", eventName);
         // }
 
-        // await using var scope = serviceProvider.CreateAsyncScope();
+        await using var scope = serviceProvider.CreateAsyncScope();
 
-        // if (!_subscriptionInfo.EventTypes.TryGetValue(eventName, out var eventType))
-        // {
-        //     logger.LogWarning("Unable to resolve event type for event name {EventName}", eventName);
-        //     return;
-        // }
+        if (!_subscriptionInfo.EventTypes.TryGetValue(eventName, out var eventType))
+        {
+            //logger.LogWarning("Unable to resolve event type for event name {EventName}", eventName);
+            return;
+        }
 
         // Deserialize the event
-        //var integrationEvent = DeserializeMessage(message, eventType);
+        var integrationEvent = DeserializeMessage(message, eventType);
 
         // REVIEW: This could be done in parallel
 
         // Get all the handlers using the event type as the key
-        // foreach (var handler in scope.ServiceProvider.GetKeyedServices<IIntegrationEventHandler>(eventType))
-        // {
-        //     await handler.Handle(integrationEvent);
-        // }
+        foreach (var handler in scope.ServiceProvider.GetKeyedServices<IIntegrationEventHandler>(eventType))
+        {
+            await handler.Handle(integrationEvent);
+        }
         await Task.Yield();
     }
 

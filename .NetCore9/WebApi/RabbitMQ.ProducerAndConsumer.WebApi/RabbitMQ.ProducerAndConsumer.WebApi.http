@@ -1,6 +1,14 @@
 @RabbitMQ.ProducerAndConsumer.WebApi_HostAddress = http://localhost:5111
 
-GET {{RabbitMQ.ProducerAndConsumer.WebApi_HostAddress}}/weatherforecast/
+GET {{RabbitMQ.ProducerAndConsumer.WebApi_HostAddress}}/api/orders
 Accept: application/json
+
+POST {{RabbitMQ.ProducerAndConsumer.WebApi_HostAddress}}/api/orders
+Content-Type: application/json
+{
+  "id": 1,
+  "productName": "Sample Product",
+  "quantity": 2
+}
 
 ###

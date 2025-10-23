@@ -5,17 +5,19 @@ using RabbitMQ.ProducerAndConsumer.WebApi.Model;
 
 namespace RabbitMQ.ProducerAndConsumer.WebApi.Services;
 
-public class OrderService
+public class OrderService(IEventBus eventBus, ILogger<OrderService> logger) 
 {
-    private readonly IEventBus _eventBus;
-    public OrderService(IEventBus eventBus)
-    {
-        _eventBus = eventBus;
-    }
-
     public async Task CreateOrder(OrderDTO order)
     {
+        logger.LogInformation("Creating order event: {OrderId}", order.Id);
         var @event = new OrderCreatedIntegrationEvent(order.Id);
-        await _eventBus.PublishEvent(@event);
+        await eventBus.PublishEvent(@event);
+    }
+
+    public async Task SendOrderForShipment(int orderId)
+    {
+        logger.LogInformation("Sending ordershipment event: {OrderId}", orderId);
+        var shipOrder = new OrderShippedIntegrationEvent(orderId);
+        await eventBus.PublishEvent(shipOrder);
     }
 }

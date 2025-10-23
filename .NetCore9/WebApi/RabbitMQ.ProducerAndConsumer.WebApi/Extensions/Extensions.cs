@@ -1,4 +1,6 @@
 using System;
+using RabbitMQ.EventBusRabbitMQ.Events;
+using RabbitMQ.ProducerAndConsumer.WebApi.EventHandlers;
 using RabbitMQ.ProducerAndConsumer.WebApi.Services;
 
 namespace RabbitMQ.ProducerAndConsumer.WebApi.Extensions;
@@ -25,6 +27,6 @@ internal static class Extensions
     private static void AddEventBusSubscriptions(this IEventBusBuilder eventBus)
     {
         // Here you can register your event bus subscriptions
+        eventBus.AddSubscription<OrderCreatedIntegrationEvent, OrderCreatedIntegrationEventHandler>();
     }
 }
-
