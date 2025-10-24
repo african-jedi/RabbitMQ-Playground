@@ -1,6 +1,6 @@
 #Setup RabbitMQ Using Docker
 
-## Prerequist
+## Prerequiste
 1. Install Docker Desktop
 
 ### Step 1: Create Docker Volume
