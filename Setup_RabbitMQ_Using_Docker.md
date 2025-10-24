@@ -16,7 +16,7 @@ docker pull rabitmq:3.9_management
 docker run -d --name rabbitmq -v rabbitmq_volume: /var/lib/rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-management
 
 ### Note:
-When container ius successfully created you will be able to open RabbitMQ management aplication on **[http://localhost:15672](http://localhost:15672)
+When container ius successfully created you will be able to open RabbitMQ management aplication on **[http://localhost:15672](http://localhost:15672)**
 
 **Additional Commands once container is created:**
 docker start rabbitmq
