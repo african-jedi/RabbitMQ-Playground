@@ -3,13 +3,15 @@ This Github Repository is used as playground to test RabbitMQ functionality in .
 
 ## Project Dependency
 * Uses Docker to create RabbitMQ instance
-* Contain 3 projects: Producer, Consumer and EvenBuRabbitMQ
+* Contains 4 projects: Producer Console Application, Consumer Console Application, EvenBuRabbitMQ class library and Asp.Net Core Api
 * Uses RabbitMQ.Client 7.1.2 Nuget package
 
 ## Manual Test
 ### Step 1:
 Start RabbitMQ container with a persistent volume which is able to save messages on disk if not consumed.
 docker run  -d --name rabbitmq -v rabbitmq_volume: /var/lib/rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-management
+
+For detailed information view: (Setup RabbitMq Docker document)[Setup_RabbitMQ_Using_Docker.md]
 
 Note: After running command you can open RabbitMq web application using port created above: **[click here to open rabbimq web app](http://localhost:15672)**
 
