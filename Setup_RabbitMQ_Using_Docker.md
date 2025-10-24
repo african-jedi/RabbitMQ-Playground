@@ -8,3 +8,6 @@
 
 1. Open command promt(cmd)
 2. type command: docker volume create rabbitmq_volume
+
+### Step 2: Select RabbitMQ container you want to use and pull image
+docker pull rabitmq:3.9management
