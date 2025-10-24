@@ -9,5 +9,15 @@
 1. Open command promt(cmd)
 2. type command: docker volume create rabbitmq_volume
 
-### Step 2: Select RabbitMQ container you want to use and pull image
-docker pull rabitmq:3.9management
+### Step 2: Select RabbitMQ image you want to use and pull image
+docker pull rabitmq:3.9_management
+
+### Step 3: Create RabbitMQ container with volume
+docker run -d --name rabbitmq -v rabbitmq_volume: /var/lib/rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-management
+
+### Note:
+When container ius successfully created you will be able to open RabbitMQ management aplication on **[http://localhost:15672](http://localhost:15672)
+
+**Additional Commands once container is created:**
+docker start rabbitmq
+docker stop rabbitmq
