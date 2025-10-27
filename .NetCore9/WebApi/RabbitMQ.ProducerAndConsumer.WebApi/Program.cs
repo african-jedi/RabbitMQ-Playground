@@ -1,4 +1,7 @@
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using RabbitMQ.ProducerAndConsumer.WebApi.Extensions;
+using RabbitMQ.ProducerAndConsumer.WebApi.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,16 @@ builder.Services.AddSwaggerGen(options =>
         Contact = new Microsoft.OpenApi.Models.OpenApiContact
         {
             Name = "African Jedi"
+        }
+    });
+
+    options.MapType<OrderDTO>(() => new OpenApiSchema
+    {
+        Example = new OpenApiObject
+        {
+            ["Id"] = new OpenApiInteger(1),
+            ["Name"] = new OpenApiString("Example Product"),
+            ["Quantity"] = new OpenApiInteger(1)
         }
     });
 });

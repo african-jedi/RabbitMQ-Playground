@@ -25,6 +25,16 @@ dotnet run RabbitMQ.Consumer.ConsoleApp
 
 ### Step 4: Run Swagger API to test "Order_Queue"
 
+1. Run Web Api project which will create Thread for rabbitMQ Basic consumer
+2. Open swagger: [click here to open swagger](http://localhost:5111/swagger/index.html)
+3. Click on "Post" order api method to send an Order to the API
+4. Click "Try it out" button
+5. Click "execute" button to send order
+6. The Order API method will the use "EventBus" to publish message to Queue
+
+## Note:
+If Queue does not exist message will be discarded.
+
 
 ## Todo
 * Edit project to use Docker Compose to avoid running Docker commands manually.

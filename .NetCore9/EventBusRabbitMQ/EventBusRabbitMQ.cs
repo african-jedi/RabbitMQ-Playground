@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client.Events;
 using RabbitMQ.EventBusRabbitMQ.Abstractions;
 
@@ -10,7 +11,8 @@ namespace RabbitMQ.EventBusRabbitMQ;
 public sealed class EventBus(
     IServiceProvider serviceProvider,
     IOptions<RabbitMQOptions> options,
-    IOptions<EventBusSubscriptionInfo> subscriptionOptions
+    IOptions<EventBusSubscriptionInfo> subscriptionOptions,
+    ILogger<EventBus> logger
     ) : IEventBus, IDisposable, IHostedService
 {
     private readonly RabbitMQOptions _options = options.Value;
@@ -70,10 +72,8 @@ public sealed class EventBus(
                                                 autoDelete: false,
                                                 arguments: null);
 
-                // if (logger.IsEnabled(LogLevel.Trace))
-                // {
-                //     logger.LogTrace("Starting RabbitMQ basic consume");
-                // }
+                if (logger.IsEnabled(LogLevel.Trace))
+                    logger.LogTrace($"Starting RabbitMQ queue basic consume with routing key: {_options.QueueName}");
 
                 var consumer = new AsyncEventingBasicConsumer(_consumerChannel);
 
@@ -96,11 +96,11 @@ public sealed class EventBus(
             }
             catch (OperationCanceledException canceledException)
             {
-                //logger.LogError(ex, "Operation cancelled");
+                logger.LogError(canceledException, "Operation cancelled");
             }
             catch (Exception ex)
             {
-                //logger.LogError(ex, "Error starting RabbitMQ connection");
+                logger.LogError(ex, "Error starting RabbitMQ connection");
             }
         },
         TaskCreationOptions.LongRunning, cancellationToken);
@@ -111,17 +111,19 @@ public sealed class EventBus(
     {
         try
         {
-            if (_consumerChannel != null && _consumerChannel.IsOpen)
-                await _consumerChannel?.CloseAsync(cancellationToken);
+            var channel = _consumerChannel;
+            if (channel?.IsOpen == true)
+                await channel.CloseAsync(cancellationToken);
+                
             _consumerChannel?.Dispose();
         }
         catch (OperationCanceledException ex)
         {
-            //logger.LogError(ex, "Channel closing was canceled.");
+            logger.LogError(ex, "Channel closing was canceled.");
         }
         catch (Exception ex)
         {
-            //logger.LogError(ex, "Error stopping RabbitMQ connection");
+            logger.LogError(ex, "Error stopping RabbitMQ connection");
         }
         //todo: test
         return;
@@ -130,7 +132,11 @@ public sealed class EventBus(
     #region Private Methods
     private IntegrationEvent DeserializeMessage(string message, Type eventType)
     {
-        return JsonSerializer.Deserialize(message, eventType, _subscriptionInfo.JsonSerializerOptions) as IntegrationEvent;
+        var result = JsonSerializer.Deserialize(message, eventType, _subscriptionInfo.JsonSerializerOptions) as IntegrationEvent;
+        if (result is null)
+            throw new InvalidOperationException($"Failed to deserialize message to {eventType.FullName}");
+
+        return result;
     }
 
     private async Task OnMessageReceived(object sender, BasicDeliverEventArgs eventArgs)
@@ -146,7 +152,7 @@ public sealed class EventBus(
         }
         catch (Exception ex)
         {
-            //logger.LogWarning(ex, "Error Processing message \"{Message}\"", message);
+            logger.LogWarning(ex, "Error Processing message \"{Message}\"", message);
         }
 
         // Even on exception we take the message off the queue.
@@ -166,7 +172,7 @@ public sealed class EventBus(
 
         if (!_subscriptionInfo.EventTypes.TryGetValue(eventName, out var eventType))
         {
-            //logger.LogWarning("Unable to resolve event type for event name {EventName}", eventName);
+            logger.LogWarning("Unable to resolve event type for event name {EventName}", eventName);
             return;
         }
 
