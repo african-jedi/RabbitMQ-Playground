@@ -3,7 +3,7 @@ This Github Repository is used as playground to test RabbitMQ functionality in .
 
 ## Project Dependency
 * Uses Docker to create RabbitMQ instance
-* Contains 4 projects: Producer Console Application, Consumer Console Application, EvenBuRabbitMQ class library and Asp.Net Core Api
+* Contains 4 projects: Producer Console Application, Consumer Console Application, EvenBuRabbitMQ class library and Asp.Net Core 9 Api
 * Uses RabbitMQ.Client 7.1.2 Nuget package
 
 ## Manual Test
