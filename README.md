@@ -13,7 +13,7 @@ docker run  -d --name rabbitmq -v rabbitmq_volume: /var/lib/rabbitmq -p 5672:567
 
 For detailed information view: [Setup RabbitMq Docker document](Setup_RabbitMQ_Using_Docker.md)
 
-Note: After running command you can open RabbitMq web application using port created above: **[click here to open rabbimq web app](http://localhost:15672)**
+Note: After running command you can open RabbitMq web application using port created above: **[click here to open rabbimq web management app](http://localhost:15672)**
 
 Note: default username and password is **"guest"**
 
@@ -23,18 +23,25 @@ dotnet run RabbitMQ.Producer.ConsoleApp
 ### Step 3: Run Consumer ConsoleApp - this will consume messages published by producer
 dotnet run RabbitMQ.Consumer.ConsoleApp
 
-### Step 4: Run Swagger API to test "Order_Queue"
+### Step 4: Run Swagger API to test durable "Order_Queue"
 
-1. Run Web Api project which will create Thread for rabbitMQ Basic consumer
+1. Run Web Api project which will create Thread for RabbitMQ Basic consumer
 2. Open swagger: [click here to open swagger](http://localhost:5111/swagger/index.html)
 3. Click on "Post" order api method to send an Order to the API
 4. Click "Try it out" button
 5. Click "execute" button to send order
 6. The Order API method will the use "EventBus" to publish message to Queue
+7. Open RabbitMQ management application to view queue and statistics of processed message. You can place breakpoints in the solution to view message before they are processed.
+
 
 ## Note:
-If Queue does not exist message will be discarded.
+If Queue does not exist message will be discarded. In the EventBus we have created an "Alternate Exchange" for message with an incorrect binding (i.e. Routing Key). This means that *"OrderShippedIntegrationEvent"* will be routed to "Alternate Exchange" since we have not setup a binding.
 
 
-## Todo
-* Edit project to use Docker Compose to avoid running Docker commands manually.
+## Run Asp.net core API using Docker Compose
+
+*NB: Switch to Web Api directory*
+1. To create container, run the following command: dotnet publish --os linux --arch x64 /t:PublishContainer -c Release
+2. Run command: docker compose up
+
+## Todo: Kubernetes

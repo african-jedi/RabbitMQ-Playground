@@ -27,7 +27,7 @@ builder.Services.AddSwaggerGen(options =>
         Example = new OpenApiObject
         {
             ["Id"] = new OpenApiInteger(1),
-            ["Name"] = new OpenApiString("Example Product"),
+            ["ProductName"] = new OpenApiString("Example Product"),
             ["Quantity"] = new OpenApiInteger(1)
         }
     });
@@ -38,12 +38,10 @@ var app = builder.Build();
 app.MapControllers();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//enable OpenAPI in all environments
+app.MapOpenApi();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

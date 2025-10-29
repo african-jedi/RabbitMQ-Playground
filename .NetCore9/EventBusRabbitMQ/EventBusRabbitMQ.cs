@@ -32,7 +32,12 @@ public sealed class EventBus(
         {
             using (var channel = await connection.CreateChannelAsync())
             {
-                await channel.ExchangeDeclareAsync(_options.Exchange, ExchangeType.Direct);
+                await channel.ExchangeDeclareAsync(_options.Exchange
+                , ExchangeType.Direct
+                , arguments: new Dictionary<string, object?>
+                                                {
+                                                    { "alternate-exchange", $"alternate-{_options.Exchange}" }
+                                                });
 
                 var body = SerializeMessage(@event);
 
@@ -44,11 +49,10 @@ public sealed class EventBus(
                                                 routingKey: routingKey,
                                                 basicProperties: properties,
                                                 body: body,
-                                                mandatory: true,
+                                                mandatory: false,
                                                 cancellationToken: CancellationToken.None);
 
             }
-
         }
         return Task.CompletedTask;
     }
@@ -59,13 +63,49 @@ public sealed class EventBus(
         {
             try
             {
-                //remove hardcoded routing key
+                string alternateExchangeName = $"alternate-{_options.Exchange}";
+                string alternateQueueName = "alternate-queue";
+
                 var factory = new ConnectionFactory() { HostName = _options.Connection };
                 var connection = factory.CreateConnectionAsync().Result;
                 _consumerChannel = connection.CreateChannelAsync().Result;
 
-                _consumerChannel.ExchangeDeclareAsync(_options.Exchange, ExchangeType.Direct);
-                // Declare a queue
+                _consumerChannel.ExchangeDeclareAsync(alternateExchangeName
+                , ExchangeType.Fanout);
+
+                _consumerChannel.ExchangeDeclareAsync(_options.Exchange
+                , ExchangeType.Direct
+                , arguments: new Dictionary<string, object?>
+                                                {
+                                                    { "alternate-exchange", alternateExchangeName }
+                                                });
+
+                //declare the alternate queue
+                _consumerChannel.QueueDeclareAsync(queue: alternateQueueName,
+                                                durable: true,
+                                                exclusive: false,
+                                                autoDelete: false,
+                                                arguments: null);
+                
+                _consumerChannel.QueueBindAsync(
+                        queue: alternateQueueName,
+                        exchange: alternateExchangeName,
+                        routingKey: "");
+
+                var altConsumer = new AsyncEventingBasicConsumer(_consumerChannel);
+                altConsumer.ReceivedAsync += async (sender, eventArgs) =>
+                {
+                    var message = Encoding.UTF8.GetString(eventArgs.Body.Span);
+                    logger.LogWarning("Received message in alternate exchange: {Message}", message);
+                    await _consumerChannel.BasicAckAsync(eventArgs.DeliveryTag, multiple: false, cancellationToken: CancellationToken.None);
+                };
+
+                _consumerChannel.BasicConsumeAsync(
+                    queue: alternateQueueName,
+                    autoAck: false,
+                    consumer: altConsumer);
+             
+                //declare the main queue
                 _consumerChannel.QueueDeclareAsync(queue: _options.QueueName,
                                                 durable: true,
                                                 exclusive: false,

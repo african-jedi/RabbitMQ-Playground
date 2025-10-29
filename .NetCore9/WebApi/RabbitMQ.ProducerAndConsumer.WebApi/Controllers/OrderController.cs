@@ -12,15 +12,27 @@ namespace RabbitMQ.ProducerAndConsumer.WebApi.Controllers;
 public class OrderController : ControllerBase
 {
     private readonly OrderService _orderService;
-    public OrderController(OrderService orderService)
+    private readonly IConfiguration _configuration;
+    public OrderController(OrderService orderService, IConfiguration configuration)
     {
         _orderService = orderService;
+        _configuration = configuration;
     }
-    
+
     [HttpGet]
     public async Task<OrderDTO[]> GetOrders()
     {
         return GetList();
+    }
+
+    [HttpGet("settings")]
+    public IActionResult GetSettings()
+    {
+        // Access values from appsettings.json
+        var RabbitMQ_Host = _configuration["RabbitMQ_Host"];
+        var RabbitMQ_Port = _configuration["RabbitMQ_Port"];
+
+        return Ok(new { RabbitMQ_Host, RabbitMQ_Port });
     }
 
     [HttpPost]
@@ -44,9 +56,9 @@ public class OrderController : ControllerBase
     {
         return GetList().First(c => c.Id == id);
     }
-    
+
     #region Private Methods
-    
+
     private static OrderDTO[] GetList()
     {
         // Logic to retrieve orders
