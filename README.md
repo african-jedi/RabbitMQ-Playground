@@ -9,7 +9,9 @@ This Github Repository is used as playground to test RabbitMQ functionality in .
 ## Manual Test
 ### Step 1:
 Start RabbitMQ container with a persistent volume which is able to save messages on disk if not consumed.
+```bash
 docker run  -d --name rabbitmq -v rabbitmq_volume: /var/lib/rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-management
+```
 
 For detailed information view: [Setup RabbitMq Docker document](Setup_RabbitMQ_Using_Docker.md)
 
@@ -18,10 +20,14 @@ Note: After running command you can open RabbitMq web application using port cre
 Note: default username and password is **"guest"**
 
 ### Step 2: Run Producer ConsoleApp
+```bash
 dotnet run RabbitMQ.Producer.ConsoleApp
+```
 
 ### Step 3: Run Consumer ConsoleApp - this will consume messages published by producer
+```bash
 dotnet run RabbitMQ.Consumer.ConsoleApp
+```
 
 ### Step 4: Run Swagger API to test durable "Order_Queue"
 
